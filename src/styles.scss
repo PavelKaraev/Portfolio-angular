@@ -1,1 +1,90 @@
-/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+$yellow: #FFC80A;
+$black: #292929;
+$grey: #9FA3A7;
+$red: #F05638;
+$purple: #8D76BE;
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  overflow-x: hidden;
+  font-family: "Rubik", sans-serif;
+  font-size: 14px;
+  color: $black;
+  background-color: #fff;
+}
+
+.container {
+  display: flex;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  @media (min-width: 1200px) {
+    max-width: 1140px;
+  }
+}
+
+.btn-link {
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 15px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: #9FA3A7;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 140px;
+  height: 40px;
+  padding: 0 25px;
+  border-radius: 100px;
+  font-family: "Rubik", sans-serif;
+  font-weight: bold;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  text-decoration: none;
+  & + .btn {
+    margin-left: 10px;
+  }
+  &_yellow {
+    background-color: $yellow;
+    color: $black;
+  }
+  &_red {
+    background-color: $red;
+    color: #fff;
+  }
+  &__stroke {
+    border: 3px solid transparent;
+    &_white {
+      border-color: #fff;
+      color: #fff;
+      &:hover {
+        background-color: #fff;
+        color: $black;
+      }
+    }
+    &_yellow {
+      border-color: $yellow;
+      color: $black;
+      &:hover {
+        background-color: $yellow;
+      }
+    }
+  }
+  @media (min-width: 992px) {
+    & + .btn {
+      margin-left: 20px;
+    }
+  }
+}

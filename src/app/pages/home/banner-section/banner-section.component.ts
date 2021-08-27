@@ -1,4 +1,8 @@
-import { ChangeDetectionStrategy, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { concat, from, interval, Observable, of } from 'rxjs';
+import { concatMap, delay, ignoreElements, map, repeat, take, takeUntil } from 'rxjs/operators';
+import { BaseAutoUnsubscribeClass } from 'src/app/models/autounsubscribe/auto-unsubscribe.model';
 
 @Component({
   selector: 'banner-section',
@@ -7,47 +11,57 @@ import { ChangeDetectionStrategy, Component, ElementRef, OnDestroy, OnInit, View
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 
-export class BannerSectionComponent implements OnInit, OnDestroy {
+export class BannerSectionComponent extends BaseAutoUnsubscribeClass implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('typedText', {static: false}) typedText: ElementRef<HTMLElement> | undefined;
-  private aText: string[] = ["Hello World! :)", "I'm Junior Front-end Developer", 'Are you ready to work with me?'];
-  private iSpeed = 100; // time delay of print out
-  private iIndex = 0; // start printing array at this position
-  private iArrLength = this.aText[1].length; // the length of the text array
-  private iScrollAt = 20; // start scrolling up at this many lines
-  private iTextPos = 0; // initialise text position
-  private sContents = ''; // initialise contents variable
-  iRow: number = 0; // initialise current row
+  private words: string[] = ["Hello World! :)", "I'm Junior Front-end Developer", 'Are you ready to work with me?'];
 
-  constructor() { }
+  constructor(
+    @Inject(DOCUMENT) document: any
+  ) { 
+    super();
+  }
 
   ngOnInit(): void {
-    this.typewriter();
+    super.ngOnInit();
   }
 
   ngOnDestroy(): void {
+    super.ngOnDestroy();
+  }
+
+  ngAfterViewInit(): void {
+    this.typeWriting().subscribe();
+  }
+
+  typeWriting(): Observable<any> {
+    return from(this.words)
+      .pipe(
+        concatMap(
+          (word: string) => {
+            const consolePrompt = document.createElement('div');
+            this.typedText?.nativeElement.appendChild(consolePrompt);
+            consolePrompt.classList.add('console__prompt');
+            
+            return this.typeEffect(word, consolePrompt);
+          }
+        ), 
+        repeat(),
+        take(this.words.join('')?.length),
+        takeUntil(this.cancellableSubject$)
+      )
+  }
+
+  typeEffect(word: string, element: HTMLElement): any {
+    return concat(
+      this.type(word, 100, element), // type
+      of('').pipe(delay(300), ignoreElements()) // pause
+    );
   }
   
-  typewriter() {
-    this.sContents = '<div class="console__prompt">';
-    this.iRow = Math.max(0, this.iIndex-this.iScrollAt);
-    const destination = this.typedText?.nativeElement;
-    if (destination) {
-      
-      while ( this.iRow < this.iIndex ) {
-        this.sContents += this.aText[this.iRow++] + '</div><div class="console__prompt">';
-      }
-
-      destination.innerHTML = this.sContents + this.aText[this.iIndex].substring(0, this.iTextPos);
-      if ( this.iTextPos++ == this.iArrLength ) {
-        this.iTextPos = 0;
-        this.iIndex++;
-        if ( this.iIndex != this.aText.length ) {
-          this.iArrLength = this.aText[this.iIndex].length;
-          setTimeout(this.typewriter.bind(this), 100);
-        }
-      } else {
-        setTimeout(this.typewriter.bind(this), this.iSpeed);
-      }
-    }
+  type(word: string, speed: number, element: HTMLElement): any {
+    return interval(speed).pipe(
+      map(char => element.innerText = word.substr(0, char + 1)),
+      take(word.length)
+    )
   }
 }

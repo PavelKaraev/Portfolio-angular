@@ -13,10 +13,10 @@ import { BaseAutoUnsubscribeClass } from 'src/app/models/autounsubscribe/auto-un
 
 export class ConsoleComponent extends BaseAutoUnsubscribeClass implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('typedText', {static: false}) typedText: ElementRef<HTMLElement> | undefined;
-  private words: string[] = ["Hello World! :)", "I'm Junior Front-end Developer", 'Are you ready to work with me?'];
+  private words: string[] = ["Hello World! =)", "I'm Front-end Developer", 'Are you ready to work with me?'];
 
   constructor(
-    @Inject(DOCUMENT) document: any
+    @Inject(DOCUMENT) private document: Document
   ) { 
     super();
   }
@@ -38,7 +38,7 @@ export class ConsoleComponent extends BaseAutoUnsubscribeClass implements OnInit
       .pipe(
         concatMap(
           (word: string) => {
-            const consolePrompt = document.createElement('div');
+            const consolePrompt = this.document.createElement('div');
             this.typedText?.nativeElement.appendChild(consolePrompt);
             consolePrompt.classList.add('console__prompt');
             

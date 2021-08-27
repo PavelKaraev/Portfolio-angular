@@ -1,10 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { BannerSectionComponent } from './banner-section.component';
+import { ConsoleModule } from './console/console.module';
 
 @NgModule({
   imports: [
-    CommonModule
+    CommonModule,
+    ConsoleModule
   ],
   declarations: [
     BannerSectionComponent
